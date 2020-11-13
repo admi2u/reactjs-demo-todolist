@@ -1,5 +1,5 @@
 import React from "react"
-import TodosList from "./components/TodosList"
+import TodosList from "./TodosList"
 
 class TodoContainer extends React.Component {
     state = {
