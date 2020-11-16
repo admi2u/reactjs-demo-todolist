@@ -2,6 +2,10 @@ import React from "react"
 
 class TodoItem extends React.Component {
     render(){
+        componentWillUnmount() {
+            alert("Item about to be deleted!");
+        }
+
         const completedStyle = {
             fontStyle: "italic",
             color: "#d35e0f",
