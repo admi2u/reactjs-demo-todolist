@@ -1,12 +1,13 @@
 import React from "react"
 import TodosList from "./TodosList"
 import InputTodo from "./InputTodo"
-import { v4 as uuidv4 } from "uuid"
 import axios from "axios"
+import Header from "./Header";
 
 class TodoContainer extends React.Component {
     state = {
         todos: [],
+        show: false
     };
 
     handleChange = id => {
@@ -16,29 +17,26 @@ class TodoContainer extends React.Component {
             todo.completed = !todo.completed;
           }
           return todo;
-        })
+        }),
+        show: !this.state.show,
       });
     };
 
     delTodo = id => {
-      this.setState({
-        todos: [
-          ...this.state.todos.filter(todo => {
-            return todo.id !== id;
-          })
-        ]
-      });
+      axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`).then(reponse => this.setState({
+        todos: [...this.state.todos.filter(todo => {
+            return todo.id !== id
+        })],
+      }))
     };
 
     addTodoItem = title => {
-      const newTodo = {
-        id: uuidv4(),
+      axios.post("https://jsonplaceholder.typicode.com/todos", {
         title: title,
-        completed: false
-      };
-      this.setState({
-        todos: [...this.state.todos, newTodo]
-      });
+        completed: false,
+      }).then(response => this.setState({
+        todos: [...this.state.todos, response.data],
+      }))
     };
 
     componentDidMount() {
@@ -49,9 +47,25 @@ class TodoContainer extends React.Component {
       }).then(response => this.setState({ todos: response.data }));
     }
 
+    componentDidUpdate(prevProps, prevState) {
+      // update logic here
+      if (prevProps.headerSpan !== this.props.headerSpan) {
+        var x = Math.floor(Math.random() * 256);
+        var y = Math.floor(Math.random() * 256);
+        var z = Math.floor(Math.random() * 256);
+        var bgColor = "rgb(" + x + "," + y + "," + z + ")";
+
+        if (prevProps.headerSpan !== this.props.headerSpan) {
+          document.getElementById("inH1").innerHTML = "clicked";
+          document.getElementById("inH1").style.backgroundColor = bgColor;
+        }
+      }
+    }
+
     render() {
         return (
             <div className="container">
+                <Header headerSpan={this.state.show} />
                 <InputTodo addTodoProps={this.addTodoItem} />
                 <TodosList 
                   todos={this.state.todos}
@@ -59,7 +73,6 @@ class TodoContainer extends React.Component {
                   deleteTodoProps={this.delTodo}
                 />
             </div>
-            
         )
     }
 }
