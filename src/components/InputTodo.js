@@ -33,3 +33,5 @@ class InputTodo extends React.Component {
         )
     }
 }
+
+export default InputTodo
